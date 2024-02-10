@@ -1,8 +1,8 @@
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
-canvas.width = 1024
-canvas.height = 576
+canvas.width = 1920
+canvas.height = 1097
 
 c.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -13,7 +13,7 @@ const background = new Sprite({
     x: 0,
     y: 0
   },
-  imageSrc: './img/background.png'
+  imageSrc: './img/newbg.jpg'
 })
 
 const shop = new Sprite({
@@ -21,7 +21,7 @@ const shop = new Sprite({
     x: 600,
     y: 128
   },
-  imageSrc: './img/shop.png',
+  imageSrc: '',
   scale: 2.75,
   framesMax: 6
 })
@@ -88,7 +88,7 @@ const player = new Fighter({
 
 const enemy = new Fighter({
   position: {
-    x: 400,
+    x: 1600,
     y: 100
   },
   velocity: {
@@ -164,7 +164,6 @@ const keys = {
   }
 }
 
-decreaseTimer()
 
 function animate() {
   window.requestAnimationFrame(animate)
@@ -229,9 +228,6 @@ function animate() {
     enemy.takeHit()
     player.isAttacking = false
 
-    gsap.to('#enemyHealth', {
-      width: enemy.health + '%'
-    })
   }
 
   // if player misses
@@ -250,10 +246,6 @@ function animate() {
   ) {
     player.takeHit()
     enemy.isAttacking = false
-
-    gsap.to('#playerHealth', {
-      width: player.health + '%'
-    })
   }
 
   // if player misses
@@ -263,7 +255,7 @@ function animate() {
 
   // end game based on health
   if (enemy.health <= 0 || player.health <= 0) {
-    determineWinner({ player, enemy, timerId })
+    determineWinner({ player, enemy })
   }
 }
 
@@ -280,10 +272,10 @@ window.addEventListener('keydown', (event) => {
         keys.a.pressed = true
         player.lastKey = 'a'
         break
-      case 'w':
-        player.velocity.y = player.velocity.y
-        break
-      case ' ':
+    //   case 'w':
+    //     player.velocity.y = player.velocity.y
+    //     break
+      case 's':
         player.attack()
         break
     }
@@ -299,9 +291,9 @@ window.addEventListener('keydown', (event) => {
         keys.ArrowLeft.pressed = true
         enemy.lastKey = 'ArrowLeft'
         break
-      case 'ArrowUp':
-        enemy.velocity.y = enemy.velocity.y
-        break
+    //   case 'ArrowUp':
+    //     enemy.velocity.y = enemy.velocity.y
+    //     break
       case 'ArrowDown':
         enemy.attack()
 
@@ -329,4 +321,14 @@ window.addEventListener('keyup', (event) => {
       keys.ArrowLeft.pressed = false
       break
   }
+})
+
+//reset
+
+window.addEventListener('keypress', (event) => {
+    switch (event.key) {
+        case ' ':
+            location.reload();
+            break
+    }
 })
