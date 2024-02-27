@@ -1,19 +1,22 @@
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
-canvas.width = 1920
-canvas.height = 1097
+canvas.width = 1024
+canvas.height = 576
 
 c.fillRect(0, 0, canvas.width, canvas.height)
 
 const gravity = 0.7
+
+var canJumpE = true;
+var canJumpP = true;
 
 const background = new Sprite({
   position: {
     x: 0,
     y: 0
   },
-  imageSrc: './img/newbg.jpg'
+  imageSrc: './img/background.png'
 })
 
 const shop = new Sprite({
@@ -21,7 +24,7 @@ const shop = new Sprite({
     x: 600,
     y: 128
   },
-  imageSrc: '',
+  imageSrc: './img/shop.png',
   scale: 2.75,
   framesMax: 6
 })
@@ -88,7 +91,7 @@ const player = new Fighter({
 
 const enemy = new Fighter({
   position: {
-    x: 1600,
+    x: 400,
     y: 100
   },
   velocity: {
@@ -164,14 +167,14 @@ const keys = {
   }
 }
 
+decreaseTimer()
 
 function animate() {
   window.requestAnimationFrame(animate)
   c.fillStyle = 'black'
   c.fillRect(0, 0, canvas.width, canvas.height)
   background.update()
-  shop.update()
-  c.fillStyle = 'rgba(255, 255, 255, 0.15)'
+  c.fillStyle = 'rgba(255, 2.55, 255, 0.15)'
   c.fillRect(0, 0, canvas.width, canvas.height)
   player.update()
   enemy.update()
@@ -228,6 +231,9 @@ function animate() {
     enemy.takeHit()
     player.isAttacking = false
 
+    gsap.to('#enemyHealth', {
+      width: enemy.health + '%'
+    })
   }
 
   // if player misses
@@ -246,6 +252,10 @@ function animate() {
   ) {
     player.takeHit()
     enemy.isAttacking = false
+
+    gsap.to('#playerHealth', {
+      width: player.health + '%'
+    })
   }
 
   // if player misses
@@ -255,7 +265,7 @@ function animate() {
 
   // end game based on health
   if (enemy.health <= 0 || player.health <= 0) {
-    determineWinner({ player, enemy })
+    determineWinner({ player, enemy, timerId })
   }
 }
 
@@ -272,9 +282,16 @@ window.addEventListener('keydown', (event) => {
         keys.a.pressed = true
         player.lastKey = 'a'
         break
-    //   case 'w':
-    //     player.velocity.y = player.velocity.y
-    //     break
+      case 'w':
+        if (canJumpP) {
+        player.velocity.y = -20;
+        canJumpP = false;
+        setTimeout(function(){
+          canJumpP = true;
+        }, 1000)
+
+      }
+        break
       case 's':
         player.attack()
         break
@@ -291,9 +308,15 @@ window.addEventListener('keydown', (event) => {
         keys.ArrowLeft.pressed = true
         enemy.lastKey = 'ArrowLeft'
         break
-    //   case 'ArrowUp':
-    //     enemy.velocity.y = enemy.velocity.y
-    //     break
+      case 'ArrowUp':
+        if (canJumpE) {
+          enemy.velocity.y = -20;
+          canJumpE = false;
+          setTimeout(function(){
+            canJumpE = true;
+          }, 1000)
+        }
+        break
       case 'ArrowDown':
         enemy.attack()
 
@@ -323,12 +346,13 @@ window.addEventListener('keyup', (event) => {
   }
 })
 
+
 //reset
 
 window.addEventListener('keypress', (event) => {
-    switch (event.key) {
-        case ' ':
-            location.reload();
-            break
-    }
+  switch (event.key) {
+      case ' ':
+          location.reload();
+          break
+  }
 })

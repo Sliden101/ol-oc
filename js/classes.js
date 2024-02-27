@@ -117,10 +117,16 @@ class Fighter extends Sprite {
 
     this.position.x += this.velocity.x
     this.position.y += this.velocity.y
-
+    // gravity function for x-axis boundary
+    if (this.position.x <= 0) {
+      this.position.x = 0; // Prevent moving beyond the left boundary
+    } else if (this.position.x + this.width >= canvas.width) {
+      this.position.x = canvas.width - this.width; // Prevent moving beyond the right boundary
+    }
     // gravity function
-    if (this.position.y + this.height + this.velocity.y >= canvas.height) {
+    if (this.position.y + this.height + this.velocity.y >= canvas.height - 96) {
       this.velocity.y = 0
+      this.position.y = 330
     } else this.velocity.y += gravity
   }
 
@@ -173,13 +179,13 @@ class Fighter extends Sprite {
           this.framesCurrent = 0
         }
         break
-      // case 'jump':
-      //   if (this.image !== this.sprites.jump.image) {
-      //     this.image = this.sprites.jump.image
-      //     this.framesMax = this.sprites.jump.framesMax
-      //     this.framesCurrent = 0
-      //   }
-      //   break
+      case 'jump':
+        if (this.image !== this.sprites.jump.image) {
+          this.image = this.sprites.jump.image
+          this.framesMax = this.sprites.jump.framesMax
+          this.framesCurrent = 0
+        }
+        break
 
       case 'fall':
         if (this.image !== this.sprites.fall.image) {
